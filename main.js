@@ -39,7 +39,7 @@ if (!process.env.EXPORT_PATH) {
 
 (async () => {
   // const page = await BrowserPage.getInstance();
-  const browser = await puppeteer.launch({ headless: true, executablePath: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" }); // true:not show browser
+  const browser = await puppeteer.launch({ headless: true }); // true:not show browser
   const page = await browser.newPage();
 
   // 检查是否存在 cookie 文件
