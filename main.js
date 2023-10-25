@@ -4,6 +4,7 @@ import JSONStream from 'JSONStream';
 import { Readable } from 'stream';
 import { exit } from 'process';
 import path from 'path';
+import { win32 } from "node:path";
 
 
 class BookPage {
@@ -38,7 +39,7 @@ if (!process.env.EXPORT_PATH) {
 
 (async () => {
   // const page = await BrowserPage.getInstance();
-  const browser = await puppeteer.launch({ headless: true }); // true:not show browser
+  const browser = await puppeteer.launch({ headless: true, executablePath: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" }); // true:not show browser
   const page = await browser.newPage();
 
   // 检查是否存在 cookie 文件
@@ -175,10 +176,12 @@ if (!process.env.EXPORT_PATH) {
     }
   
     const client = await page.target().createCDPSession()
-    await client.send('Page.setDownloadBehavior', {
-      behavior: 'allow',
-      downloadPath: folderPath,
-    })
+    const options = { output: folderPath };
+    await client.send("Browser.setDownloadBehavior", {
+      behavior: "allow",
+      downloadPath: win32.resolve(win32.normalize(options.output)),
+      // folderPath,
+    });
 
     for ( let i = 0; i < books.length; i++ ) {
       for (let j = 0; j < books[i].pages.length; j++ ) {
@@ -218,7 +221,7 @@ if (!process.env.EXPORT_PATH) {
 
 // browserpage, bookName, url
 async function downloadMardown(page, rootPath, book, mdname, docUrl) {
-  const url = 'https://www.yuque.com/' + docUrl + '/markdown?attachment=true&latexcode=false&anchor=false&linebreak=false';
+  const url = 'https://www.yuque.com/' + docUrl + '/markdown?attachment=true&latexcode=true&anchor=false&linebreak=true';
   const timeout = 10000; // 10s timeout
   const maxRetries = 3; // max retry count
 
